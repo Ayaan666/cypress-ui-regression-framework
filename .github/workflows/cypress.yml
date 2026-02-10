@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [ main ]
   schedule:
-    - cron: "0 2 * * *"   # runs daily at 2 AM UTC
+    - cron: "0 2 * * *"
 
 jobs:
   smoke-tests:
@@ -14,35 +14,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install
+      - uses: actions/checkout@v4
 
       - name: Run Cypress smoke suite
-        run: npx cypress run --spec "cypress/e2e/smoke/**/*.cy.ts"
+        uses: cypress-io/github-action@v6
+        with:
+          spec: cypress/e2e/smoke/**/*.cy.ts
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-report
+          path: cypress/reports/html
 
   regression-tests:
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install
+      - uses: actions/checkout@v4
 
       - name: Run Cypress regression suite
-        run: npx cypress run --spec "cypress/e2e/regression/**/*.cy.ts"
+        uses: cypress-io/github-action@v6
+        with:
+          spec: cypress/e2e/regression/**/*.cy.ts
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: regression-report
+          path: cypress/reports/html
