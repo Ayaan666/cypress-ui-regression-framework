@@ -9,7 +9,8 @@ describe("PIM Regression Suite", () => {
     PimPage.openPimModule();
     PimPage.clickAddEmployee();
 
-    const firstName = "John";
+    const uniqueId = Date.now();
+    const firstName = `John${uniqueId}`;
     const lastName = "Tester";
 
     PimPage.enterFirstName(firstName);
