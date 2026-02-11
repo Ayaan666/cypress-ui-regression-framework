@@ -13,19 +13,25 @@ jobs:
     if: github.event_name != 'schedule'
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run Cypress smoke suite
+      - name: Run Cypress smoke suite on ${{ matrix.browser }}
         uses: cypress-io/github-action@v6
         with:
+          browser: ${{ matrix.browser }}
           spec: cypress/e2e/smoke/**/*.cy.ts
 
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
-          name: smoke-report
+          name: smoke-report-${{ matrix.browser }}
           path: cypress/reports/html
+
 
   regression-tests:
     if: github.event_name == 'schedule'
