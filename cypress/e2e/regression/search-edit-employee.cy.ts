@@ -2,6 +2,7 @@ import LoginPage from "../../pages/login.page";
 import PimPage from "../../pages/pim.page";
 
 
+
 describe("PIM Employee Search & Edit", () => {
   it("should search and update employee successfully @regression", () => {
     LoginPage.visit();
@@ -15,9 +16,16 @@ describe("PIM Employee Search & Edit", () => {
 
     // Create employee first (reuse existing flow)
     PimPage.clickAddEmployee();
-    PimPage.enterFirstName(firstName);
-    PimPage.enterLastName(lastName);
-    PimPage.saveEmployee();
+
+PimPage.enterFirstName(firstName);
+PimPage.enterLastName(lastName);
+
+// ⭐ add unique employee ID before saving
+const employeeId = Date.now().toString();
+PimPage.enterEmployeeId(employeeId);
+
+PimPage.saveEmployee();
+
     PimPage.verifyEmployeeCreated(firstName);
 
     // Search created employee

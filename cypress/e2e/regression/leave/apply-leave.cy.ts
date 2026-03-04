@@ -1,38 +1,44 @@
-import LoginPage from "../../../pages/login.page";
-import LeavePage from "../../../pages/leave.page";
+import LoginPage from "../../../pages/login.page"
+import LeavePage from "../../../pages/leave.page"
 
-describe("Leave Request Flow", () => {
-  it("should create entitlement, apply leave, and verify in leave list @regression", () => {
 
-    LoginPage.visit();
-    LoginPage.login("Admin", "admin123");
+describe("Leave Management Flow", () => {
 
-    const employeeName = "Paul Collings"; // demo employee in OrangeHRM
+  it("should create entitlement and apply leave successfully @regression", () => {
 
-    // ⭐ Step 1 — Create entitlement (precondition)
-    LeavePage.openEntitlements();
-    LeavePage.selectEmployeeForEntitlement(employeeName);
-    LeavePage.selectLeaveTypeForEntitlement();
-    LeavePage.enterEntitlementDays("5");
-    LeavePage.saveEntitlement();
+    LoginPage.visit()
 
-    // ⭐ Step 2 — Apply leave
-    LeavePage.openLeaveModule();
-    LeavePage.clickApplyLeave();
-    LeavePage.selectLeaveType();
+    LoginPage.login("Admin", "admin123")
 
-    const today = new Date();
-    today.setDate(today.getDate() + 5);
-    const date = today.toISOString().split("T")[0];
+    LeavePage.openLeaveModule()
 
-    LeavePage.pickFromDate(date);
-    LeavePage.pickToDate(date);
+    // Step 1: Create entitlement
+    LeavePage.openEntitlements()
 
-    LeavePage.submitLeave();
-    LeavePage.verifyLeaveSuccess();
+    LeavePage.selectEmployee("Manda")
 
-    // ⭐ Step 3 — Verify in My Leave
-    LeavePage.openMyLeaveList();
-    LeavePage.verifyLeaveEntry();
-  });
-});
+    LeavePage.selectLeaveTypeForEntitlement()
+
+    LeavePage.enterEntitlementDays("5")
+
+    LeavePage.saveEntitlement()
+
+    // Step 2: Apply leave
+    LeavePage.openApplyLeave()
+
+    LeavePage.selectLeaveType()
+
+    LeavePage.setFromDate("2026-06-10")
+
+    LeavePage.setToDate("2026-06-12")
+
+    LeavePage.submitLeave()
+
+    // Step 3: Verify leave
+    LeavePage.openMyLeave()
+
+    LeavePage.verifyLeaveEntry()
+
+  })
+
+})

@@ -4,96 +4,154 @@ class LeavePage {
     cy.contains("span", "Leave").click();
   }
 
-  // ⭐ NEW — entitlement navigation
-openEntitlements() {
-  // open Leave module
-  cy.contains("span", "Leave").click();
+  // ===============================
+  // CREATE LEAVE ENTITLEMENT
+  // ===============================
 
-  // open Entitlements dropdown (structure-safe)
-  cy.contains("button, span, a", "Entitlements", { timeout: 15000 })
-    .should("be.visible")
-    .click();
+  openEntitlements() {
 
-  // click "Add Entitlements" from dropdown
-  cy.contains("a, span", "Add Entitlements", { timeout: 15000 })
-    .should("be.visible")
-    .click();
+    cy.contains("span", "Entitlements").click();
 
-  // confirm navigation reached Add Entitlement page
-  cy.url({ timeout: 15000 }).should("include", "addLeaveEntitlement");
-}
+    cy.contains("a", "Add Entitlements")
+      .click();
 
+    cy.url()
+      .should("include", "addLeaveEntitlement");
+  }
 
-  selectEmployeeForEntitlement(employeeName: string) {
+  selectEmployee(employeeName: string) {
+
+    cy.intercept("GET", "**/api/v2/pim/employees*")
+      .as("employeeSearch");
+
     cy.get('input[placeholder="Type for hints..."]')
       .first()
-      .type(employeeName);
+      .clear()
+      .type(employeeName, { delay: 120 });
 
-    cy.contains(".oxd-autocomplete-option", employeeName, { timeout: 10000 })
+    cy.wait("@employeeSearch");
+
+    cy.get(".oxd-autocomplete-option", { timeout: 15000 })
+      .should("be.visible")
+      .first()
       .click();
   }
 
-  selectLeaveTypeForEntitlement() {
-    cy.get(".oxd-select-text").first().click();
-    cy.get(".oxd-select-option").first().click();
-  }
+selectLeaveTypeForEntitlement() {
 
+  // open dropdown
+  cy.contains("label", "Leave Type")
+    .parents(".oxd-input-group")
+    .find(".oxd-select-text")
+    .click();
+
+  // wait for dropdown to render
+  cy.get(".oxd-select-dropdown", { timeout: 15000 })
+    .should("be.visible");
+
+  // select option using contains
+  cy.contains(".oxd-select-option", "CAN")
+    .click({ force: true });
+
+}
   enterEntitlementDays(days: string) {
-    cy.get('input.oxd-input').last().clear().type(days);
+
+    cy.get('input.oxd-input')
+      .last()
+      .clear()
+      .type(days);
   }
 
   saveEntitlement() {
-    cy.contains("button", "Save").click();
-    cy.get("body", { timeout: 10000 }).should("contain.text", "Successfully");
-  }
 
-  // ⭐ APPLY LEAVE FLOW
-  clickApplyLeave() {
-    cy.contains("a", "Apply").click({ force: true });
-    cy.url({ timeout: 15000 }).should("include", "/leave/applyLeave");
+  cy.contains("button", "Save")
+    .should("be.enabled")
+    .click();
+
+  // handle entitlement confirmation popup
+  cy.contains("button", "Confirm", { timeout: 15000 })
+    .should("be.visible")
+    .click();
+
+  // verify success toast
+  cy.get(".oxd-toast", { timeout: 15000 })
+    .should("be.visible")
+    .and("contain", "Success");
+}
+
+  // ===============================
+  // APPLY LEAVE
+  // ===============================
+
+  openApplyLeave() {
+
+    cy.contains("a", "Apply")
+      .click();
+
+    cy.url()
+      .should("include", "applyLeave");
   }
 
   selectLeaveType() {
-    cy.get(".oxd-select-text").first().click({ force: true });
-    cy.get(".oxd-select-option").first().click({ force: true });
+
+    cy.contains("label", "Leave Type")
+      .parents(".oxd-input-group")
+      .find(".oxd-select-text")
+      .click();
+
+    cy.get(".oxd-select-dropdown")
+      .should("be.visible");
+
+    cy.get(".oxd-select-option")
+      .eq(1)
+      .click();
   }
 
-  pickFromDate(date: string) {
+  setFromDate(date: string) {
+
     cy.contains("label", "From Date")
       .parents(".oxd-input-group")
       .find("input")
-      .click({ force: true })
-      .type(`{selectall}${date}{enter}`, { force: true });
+      .clear()
+      .type(`${date}{enter}`);
   }
 
-  pickToDate(date: string) {
+  setToDate(date: string) {
+
     cy.contains("label", "To Date")
       .parents(".oxd-input-group")
       .find("input")
-      .click({ force: true })
-      .type(`{selectall}${date}{enter}`, { force: true });
+      .clear()
+      .type(`${date}{enter}`);
   }
 
   submitLeave() {
-    cy.contains("button", "Apply", { timeout: 15000 })
+
+    cy.contains("button", "Apply")
       .should("be.visible")
-      .and("not.be.disabled")
-      .then(($btn) => cy.wrap($btn).click());
+      .click();
 
-    cy.get("body", { timeout: 15000 }).should("contain.text", "Successfully");
+    cy.get(".oxd-toast")
+      .should("be.visible")
+      .and("contain", "Success");
   }
 
-  verifyLeaveSuccess() {
-    cy.get("body", { timeout: 15000 }).should("contain.text", "Successfully");
-  }
+  // ===============================
+  // VERIFY LEAVE
+  // ===============================
 
-  openMyLeaveList() {
-    cy.contains("a", "My Leave").click();
+  openMyLeave() {
+
+    cy.contains("a", "My Leave")
+      .click();
   }
 
   verifyLeaveEntry() {
-    cy.get(".oxd-table-body", { timeout: 15000 }).should("exist");
+
+    cy.get(".oxd-table-body", { timeout: 15000 })
+      .should("be.visible");
   }
+
 }
 
-export default new LeavePage();   // ⭐ MUST be instance
+export default new LeavePage();
