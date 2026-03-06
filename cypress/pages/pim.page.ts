@@ -17,12 +17,14 @@ class PimPage {
   }
 
   // ✅ Correct Employee ID field index
-  enterEmployeeId(id: string) {
-    cy.get('input.oxd-input.oxd-input--active')
-      .eq(3)   // ⭐ FIXED index
-      .clear()
-      .type(id);
-  }
+enterEmployeeId(id: string) {
+  const validId = id.substring(0,10);
+
+  cy.get('input.oxd-input.oxd-input--active')
+    .eq(2)
+    .clear()
+    .type(validId);
+}
 
   saveEmployee() {
     // wait until employee ID populated / stable
