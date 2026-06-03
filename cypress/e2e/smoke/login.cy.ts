@@ -1,13 +1,20 @@
-describe("Login Smoke Suite", () => {
+import LoginPage from '../../pages/login.page';
 
-  it("should login successfully @smoke", () => {
+describe('Login Smoke Suite', () => {
 
-    cy.login("Admin", "admin123")
+    it('Login Success', () => {
 
-    cy.url({ timeout: 10000 }).should("include", "/dashboard")
+        cy.fixture('users').then((users) => {
 
-    cy.get(".oxd-topbar-header-breadcrumb").should("be.visible")
+            LoginPage.visit();
 
-  })
+            LoginPage.login(
+                users.admin.username,
+                users.admin.password
+            );
 
-})
+        });
+
+    });
+
+});

@@ -1,23 +1,25 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  testDir: "./tests",
+  testDir: './tests',
+
+  workers: 4, // ✅ correct placement
 
   projects: [
     {
-      name: "setup",
+      name: 'setup',
       testMatch: /.*\.setup\.spec\.ts/,
     },
     {
-      name: "chromium",
+      name: 'chromium',
       use: {
-        browserName: "chromium",
-        baseURL: "https://opensource-demo.orangehrmlive.com",
-        storageState: "storageState.json",
-        trace: "on-first-retry",
+        browserName: 'chromium',
+        baseURL: 'https://opensource-demo.orangehrmlive.com',
+        storageState: 'storageState.json',
+        trace: 'on-first-retry',
       },
-      dependencies: ["setup"],
-      testIgnore: /.*\.setup\.spec\.ts/,   // ⭐ important line
+      dependencies: ['setup'],
+      testIgnore: /.*\.setup\.spec\.ts/,
     },
   ],
 });

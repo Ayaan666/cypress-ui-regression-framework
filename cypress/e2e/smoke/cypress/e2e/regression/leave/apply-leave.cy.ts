@@ -1,6 +1,6 @@
 import LoginPage from "../../../pages/login.page"
-import LeavePage from "../../../pages/Leave.Page"
-const leaveType = "CAN - Vacation";
+import LeavePage from "../../../pages/leave.page"
+
 
 describe("Leave Management Flow", () => {
 
@@ -15,9 +15,9 @@ describe("Leave Management Flow", () => {
     // Step 1: Create entitlement
     LeavePage.openEntitlements()
 
-    LeavePage.selectEmployee("Charles  Carter")
+    LeavePage.selectEmployee("Manda")
 
-    LeavePage.selectLeaveTypeForEntitlement(leaveType);
+    LeavePage.selectLeaveTypeForEntitlement()
 
     LeavePage.enterEntitlementDays("5")
 
@@ -26,7 +26,7 @@ describe("Leave Management Flow", () => {
     // Step 2: Apply leave
     LeavePage.openApplyLeave()
 
-   LeavePage.selectLeaveType("CAN - Vacation")
+    LeavePage.selectLeaveType()
 
     LeavePage.setFromDate("2026-06-10")
 

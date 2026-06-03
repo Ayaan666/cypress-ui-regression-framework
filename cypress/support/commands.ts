@@ -1,13 +1,20 @@
-Cypress.Commands.add("login", (username: string, password: string) => {
+Cypress.Commands.add("login", (username, password) => {
 
-  cy.visit("https://opensource-demo.orangehrmlive.com")
+    cy.session([username, password], () => {
 
-  cy.get('input[name="username"]').type(username)
+        cy.visit("/");
 
-  cy.get('input[name="password"]').type(password)
+        cy.get('input[name="username"]')
+          .type(username);
 
-  cy.get('button[type="submit"]').click()
+        cy.get('input[name="password"]')
+          .type(password);
 
-  cy.url().should("include", "dashboard")
+        cy.get('button[type="submit"]')
+          .click();
 
-})
+        cy.url().should('include', '/dashboard');
+    });
+
+    cy.visit('/web/index.php/dashboard/index');
+});
