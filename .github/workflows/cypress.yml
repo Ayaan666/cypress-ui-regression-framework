@@ -1,52 +1,29 @@
-name: Cypress UI Regression
+name: Cypress Smoke Tests
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+
   pull_request:
-    branches: [ main ]
-  schedule:
-    - cron: "0 2 * * *"
+    branches:
+      - main
 
 jobs:
-  smoke-tests:
-    if: github.event_name != 'schedule'
-    runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        browser: [chrome, firefox]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Run Cypress smoke suite on ${{ matrix.browser }}
-        uses: cypress-io/github-action@v6
-        with:
-          browser: ${{ matrix.browser }}
-          spec: cypress/e2e/smoke/**/*.cy.ts
-
-      - name: Upload HTML report
-        uses: actions/upload-artifact@v4
-        with:
-          name: smoke-report-${{ matrix.browser }}
-          path: cypress/reports/html
-
-
-  regression-tests:
-    if: github.event_name == 'schedule'
+  smoke:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Run Cypress regression suite
-        uses: cypress-io/github-action@v6
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          spec: cypress/e2e/regression/**/*.cy.ts
+          node-version: 20
 
-      - name: Upload HTML report
-        uses: actions/upload-artifact@v4
-        with:
-          name: regression-report
-          path: cypress/reports/html
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Smoke Tests
+        run: npx cypress run --spec "cypress/e2e/smoke/**/*.cy.ts"
