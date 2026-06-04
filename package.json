@@ -1,13 +1,23 @@
 {
   "name": "cypress-ui-regression-framework",
   "version": "1.0.0",
-  "description": "",
+  "description": "Enterprise Cypress + TypeScript UI Automation Framework",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "open": "cypress open",
+    "smoke": "cypress run --spec \"cypress/e2e/smoke/**/*.cy.ts\"",
+    "regression": "cypress run --spec \"cypress/e2e/regression/**/*.cy.ts\"",
+    "all": "cypress run",
+    "report:merge": "mochawesome-merge cypress/reports/*.json > mochawesome.json",
+    "report:generate": "marge mochawesome.json"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "cypress",
+    "typescript",
+    "automation",
+    "qa"
+  ],
+  "author": "Ayaan Siddiqui",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
@@ -16,5 +26,10 @@
     "cypress-mochawesome-reporter": "^4.0.2",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "mochawesome": "^7.1.4",
+    "mochawesome-merge": "^5.1.1",
+    "mochawesome-report-generator": "^6.3.2"
   }
 }
